@@ -1,8 +1,8 @@
 package com.company.examples.module2.ex018_lambda;
 
 @FunctionalInterface
-public interface BinaryOperation<T> {
+public interface LambdaBoxCreator {
 
-    T apply(T arg1, T arg2);
+    Box create(double weight);
 
 }
