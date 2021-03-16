@@ -1,10 +1,9 @@
 package com.company.examples.module2.ex018_lambda;
 
-import com.company.examples.module2.ex010_constrdemo.B;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.function.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class Main {
 
