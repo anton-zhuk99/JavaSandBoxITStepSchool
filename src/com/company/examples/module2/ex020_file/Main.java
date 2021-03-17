@@ -16,6 +16,7 @@ public class Main {
     static void fileScannerExample() throws IOException {
         File file = new File("C:\\Users\\Anton\\Desktop\\test\\file.txt");
         // file.createNewFile();
+
         Scanner fileScanner = new Scanner(file);
         // delimiters
         fileScanner.useDelimiter("[^a-zA-Z0-9]+");
@@ -25,7 +26,7 @@ public class Main {
         fileScanner.close();
     }
 
-    public static void main(String[] args) throws IOException {
+    static void fileReadContent() throws IOException {
         File directory = new File("C:\\Users\\Anton\\Desktop\\test");
         Scanner scanner = new Scanner(System.in);
         String fileName = scanner.next();
@@ -33,9 +34,14 @@ public class Main {
         Path path = Paths.get(stringPath);
 
         String content = Files.readString(path, StandardCharsets.UTF_8);
-        String contentModified = content.replace("foo", "bar");
+        Scanner stringScanner = new Scanner(content);
+        char[] word = stringScanner.next().toCharArray();
         // make changes
-        Files.writeString(path, contentModified, StandardCharsets.UTF_8);
+        Files.writeString(path, content, StandardCharsets.UTF_8);
+    }
+
+    public static void main(String[] args) throws IOException {
+
     }
 
 }
