@@ -1,6 +1,10 @@
 package com.company.examples.module2.ex020_file;
 
-public class PersonalInfo {
+import java.io.Serializable;
+
+public class PersonalInfo implements Serializable {
+
+    private static final long serialVersionUID = 2L;
 
     private String firstName;
     private String lastName;
@@ -37,5 +41,15 @@ public class PersonalInfo {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonalInfo{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                '}';
     }
 }

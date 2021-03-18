@@ -1,6 +1,10 @@
 package com.company.examples.module2.ex020_file;
 
-public class AddressInfo {
+import java.io.Serializable;
+
+public class AddressInfo implements Serializable {
+
+    private static final long serialVersionUID = 4L;
 
     private String street;
     private int houseNumber;
@@ -37,5 +41,15 @@ public class AddressInfo {
 
     public void setFlatNumber(String flatNumber) {
         this.flatNumber = flatNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "AddressInfo{" +
+                "street='" + street + '\'' +
+                ", houseNumber=" + houseNumber +
+                ", floor=" + floor +
+                ", flatNumber='" + flatNumber + '\'' +
+                '}';
     }
 }

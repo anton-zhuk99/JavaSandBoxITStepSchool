@@ -1,6 +1,10 @@
 package com.company.examples.module2.ex020_file;
 
-public class PassportInfo {
+import java.io.Serializable;
+
+public class PassportInfo implements Serializable {
+
+    private static final long serialVersionUID = 3L;
 
     private String passportSeries;
     private String passportNumber;
@@ -37,5 +41,15 @@ public class PassportInfo {
 
     public void setTaxPayerNumber(long taxPayerNumber) {
         this.taxPayerNumber = taxPayerNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "PassportInfo{" +
+                "passportSeries='" + passportSeries + '\'' +
+                ", passportNumber='" + passportNumber + '\'' +
+                ", acquirePlaceId=" + acquirePlaceId +
+                ", taxPayerNumber=" + taxPayerNumber +
+                '}';
     }
 }

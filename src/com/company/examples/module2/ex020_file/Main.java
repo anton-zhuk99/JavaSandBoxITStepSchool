@@ -73,34 +73,63 @@ public class Main {
         writeBytes(bytes, "C:\\Users\\Anton\\Desktop\\test\\outputFile.txt");
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+//    static <T extends Serializable> T deepCopy(T obj) {
+//
+//    }
+
+    public static void main(String[] args) throws ClassNotFoundException {
         Person person = new Person();
-        person.setFirstName("John");
-        person.setLastName("Doe");
-        person.setAge(25);
-        person.setGender("Male");
-        person.setPassportSeries("AO");
-        person.setPassportNumber("123456");
-        person.setAcquirePlaceId(44);
-        person.setTaxPayerNumber(123456789L);
-        person.setStreet("Street");
-        person.setHouseNumber(65);
-        person.setFloor(8);
-        person.setFlatNumber("811B");
+        PersonalInfo personalInfo = new PersonalInfo();
+        PassportInfo passportInfo = new PassportInfo();
+        AddressInfo addressInfo = new AddressInfo();
+        personalInfo.setFirstName("John");
+        personalInfo.setLastName("Doe");
+        personalInfo.setAge(25);
+        personalInfo.setGender("Male");
+        passportInfo.setPassportSeries("AO");
+        passportInfo.setPassportNumber("123456");
+        passportInfo.setAcquirePlaceId(44);
+        passportInfo.setTaxPayerNumber(123456789L);
+        addressInfo.setStreet("Street");
+        addressInfo.setHouseNumber(65);
+        addressInfo.setFloor(8);
+        addressInfo.setFlatNumber("811B");
+
+        person
+                .setPersonalInfo(personalInfo)
+                .setPassportInfo(passportInfo)
+                .setAddressInfo(addressInfo);
 
         // SERIALIZATION
-        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        try (
+                FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)
+        ) {
 
-        objectOutputStream.writeObject(person);
+            objectOutputStream.writeObject(person);
 
-        objectOutputStream.close();
+        } catch (IOException ex) {
+
+            System.out.println("IOException was occurred");
+            System.out.println(ex.getMessage());
+
+        }
 
         // DESERIALIZATION
-        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
-        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        Person deserializedPerson = null;
+        try (
+                FileInputStream fileInputStream = new FileInputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)
+        ) {
 
-        Person deserializedPerson = (Person) objectInputStream.readObject();
+            deserializedPerson = (Person) objectInputStream.readObject();
+
+        } catch (IOException | ClassNotFoundException ex) {
+
+            System.out.println("Exception occurred.");
+            System.out.println(ex.getMessage());
+
+        }
 
         System.out.println(deserializedPerson);
     }
