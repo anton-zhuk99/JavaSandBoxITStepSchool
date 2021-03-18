@@ -25,7 +25,7 @@ public class Main {
         fileScanner.close();
     }
 
-    static void fileWriteContent() throws IOException {
+    static void simpleFileWriteExample() throws IOException {
         File directory = new File("C:\\Users\\Anton\\Desktop\\test");
         Scanner scanner = new Scanner(System.in);
         String fileName = scanner.next();
@@ -68,9 +68,41 @@ public class Main {
         outputStream.close();
     }
 
-    public static void main(String[] args) throws IOException {
+    static void readWriteExample() throws IOException {
         byte[] bytes = readBytes("C:\\Users\\Anton\\Desktop\\test\\file.txt");
         writeBytes(bytes, "C:\\Users\\Anton\\Desktop\\test\\outputFile.txt");
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        Person person = new Person();
+        person.setFirstName("John");
+        person.setLastName("Doe");
+        person.setAge(25);
+        person.setGender("Male");
+        person.setPassportSeries("AO");
+        person.setPassportNumber("123456");
+        person.setAcquirePlaceId(44);
+        person.setTaxPayerNumber(123456789L);
+        person.setStreet("Street");
+        person.setHouseNumber(65);
+        person.setFloor(8);
+        person.setFlatNumber("811B");
+
+        // SERIALIZATION
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
+        objectOutputStream.writeObject(person);
+
+        objectOutputStream.close();
+
+        // DESERIALIZATION
+        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\Anton\\Desktop\\test\\personSer.ser");
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+        Person deserializedPerson = (Person) objectInputStream.readObject();
+
+        System.out.println(deserializedPerson);
     }
 
 }
