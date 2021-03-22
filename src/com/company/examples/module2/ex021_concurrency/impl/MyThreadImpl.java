@@ -24,4 +24,8 @@ public class MyThreadImpl implements Runnable {
         }
         System.out.println(thread.getName() + " finished");
     }
+
+    public Thread getThread() {
+        return thread;
+    }
 }
