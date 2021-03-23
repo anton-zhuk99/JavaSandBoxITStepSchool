@@ -118,7 +118,18 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        priorityExample();
+
+        int[] arr = {1, 2, 3, 4, 5};
+
+        SumArrayThread sat1 = new SumArrayThread("Child 1", arr);
+        SumArrayThread sat2 = new SumArrayThread("Child 2", arr);
+
+        try {
+            sat1.join();
+            sat2.join();
+        } catch (InterruptedException exc) {
+            System.out.println("Main thread interrupted");
+        }
     }
 
 }
