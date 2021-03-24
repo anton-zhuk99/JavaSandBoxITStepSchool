@@ -220,9 +220,14 @@ public class Main {
         }
     }
 
+    static int recursion(int depth) {
+        System.out.printf("Level %d%n", depth);
+        return recursion(depth + 1);
+    }
+
     public static void main(String[] args) {
 
-
+        recursion(0);
 
     }
 
