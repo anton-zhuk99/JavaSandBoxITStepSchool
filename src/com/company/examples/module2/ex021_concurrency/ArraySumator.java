@@ -4,6 +4,7 @@ public class ArraySumator {
 
     private int sum;
 
+    // thread-safe
     public int sum(int[] arr) {
         sum = 0;
         for (int i = 0; i < arr.length; i++) {

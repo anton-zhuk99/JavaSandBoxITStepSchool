@@ -18,6 +18,7 @@ public class SumArrayThread extends Thread {
         synchronized (as) {
             answer = as.sum(this.arr);
         }
+
         System.out.println("In thread " + Thread.currentThread().getName() + " answer = " + answer);
     }
 }

@@ -5,6 +5,8 @@ import com.company.examples.module2.ex021_concurrency.impl.MyThreadImpl;
 import com.company.examples.module2.ex021_concurrency.impl.MyThreadSimple;
 import com.company.examples.module2.ex021_concurrency.prior.MyPriorityThread;
 
+import java.time.temporal.IsoFields;
+
 public class Main {
 
     static void sleep(long millis) {
@@ -117,8 +119,7 @@ public class Main {
         System.out.println("Main thread finished");
     }
 
-    public static void main(String[] args) {
-
+    static void synchroExample() {
         int[] arr = {1, 2, 3, 4, 5};
 
         SumArrayThread sat1 = new SumArrayThread("Child 1", arr);
@@ -130,6 +131,99 @@ public class Main {
         } catch (InterruptedException exc) {
             System.out.println("Main thread interrupted");
         }
+    }
+
+    static void lambdaThreadExample() {
+        Thread newThread = new Thread(
+                () -> System.out.println("Hello world, I'm in thread " + Thread.currentThread().getName()),
+                "Child 1"
+        );
+        newThread.start();
+
+        try {
+            newThread.join();
+        } catch (InterruptedException e) {
+            System.out.println("Main thread interrupted");
+        }
+    }
+
+    static void waitNotifyExample1() {
+        Processor processor = new Processor();
+        Thread thread1 = new Thread(
+                () -> {
+                    try {
+                        processor.produce();
+                    } catch (InterruptedException exc) {
+                        System.out.printf("Thread %s interrupted%n", Thread.currentThread().getName());
+                    }
+                },
+                "Child #1");
+        Thread thread2 = new Thread(
+                () -> {
+                    try {
+                        processor.consume();
+                    } catch (InterruptedException exc) {
+                        System.out.printf("Thread %s interrupted%n", Thread.currentThread().getName());
+                    }
+                },
+                "Child #2");
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException exc) {
+            System.out.printf("Thread %s interrupted", Thread.currentThread().getName());
+        }
+    }
+
+    static void waitNotifyExample2() {
+        int capacity = 10;
+
+        BlockingQueue<Integer> blockingQueue = new BlockingQueue<>(capacity);
+
+        Thread thread1 = new Thread(
+                () -> {
+                    for (int i = 0; i < capacity * 2; i++) {
+                        try {
+                            blockingQueue.put(i);
+                        } catch (InterruptedException e) {
+                            System.out.printf("Thread %s interrupted%n", Thread.currentThread().getName());
+                        }
+                    }
+                },
+                "Child 1"
+        );
+        Thread thread2 = new Thread(
+                () -> {
+                    for (int i = 0; i < capacity * 2; i++) {
+                        try {
+                            blockingQueue.take();
+                        } catch (InterruptedException e) {
+                            System.out.printf("Thread %s interrupted%n", Thread.currentThread().getName());
+                        }
+                    }
+                },
+                "Child 2"
+        );
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException exc) {
+            System.out.printf("Main thread interrupted%n");
+        }
+    }
+
+    public static void main(String[] args) {
+
+
+
     }
 
 }
