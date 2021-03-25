@@ -1,9 +1,19 @@
 package com.company.examples.module2.ex022_concurr_api;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
 
 public class Main {
+
+    static Callable<String> createCallable(String str, int timeout) {
+        return () -> {
+            sleep(timeout);
+            return str;
+        };
+    }
 
     static void sleep(long millis) {
         try {
@@ -27,8 +37,7 @@ public class Main {
         }
     }
 
-    // Java Concurrency API
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    static void executorWithCallableAndFutureExample() throws ExecutionException, InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2); // pool thread
 
         Runnable task1 = () -> {
@@ -51,6 +60,31 @@ public class Main {
         System.out.println("Result is " + result);
 
         shutdown(executor, 3);
+    }
+
+    // Java Concurrency API
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newWorkStealingPool(); // thread pool
+
+        List<Callable<String>> callables = Arrays.asList(
+                createCallable("task1", 1000),
+                createCallable("task2", 0),
+                createCallable("task3", 1000)
+        );
+
+        //List<Future<String>> futures = executor.invokeAll(callables);
+        String result = executor.invokeAny(callables);
+        System.out.println(result);
+
+//        List<String> results = new ArrayList<>();
+//        for (Future<String> future: futures) {
+//            results.add(future.get());
+//            System.out.println(results.get(results.size() - 1));
+//        }
+//
+//        System.out.println(results);
+
+        shutdown(executor, 5);
     }
 
 }
