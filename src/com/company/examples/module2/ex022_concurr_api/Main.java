@@ -1,9 +1,6 @@
 package com.company.examples.module2.ex022_concurr_api;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -137,13 +134,13 @@ public class Main {
             //lock.lock(); // get the lock, wait until the lock is released
             System.out.println("Is locked? " + lock.isLocked());
             sleep(1000);
-            System.out.println("Is held by me? " + lock.isHeldByCurrentThread());
+            System.out.println("Is held by me? " + lock.isHeldByCurrentThread());// hold held holden
             sleep(2000);
             boolean locked = lock.tryLock();
             System.out.println("Try lock: " + locked);
             sleep(3000);
-            locked = lock.tryLock();
-            if (locked) {
+            locked = lock.tryLock(); // true
+            if (lock.isHeldByCurrentThread()) {
                 System.out.println("Lock is held by me.");
             }
         });
@@ -152,9 +149,59 @@ public class Main {
         // isLocked(), isHeldByCurrentThread(), tryLock()
     }
 
+    static void collectionsWithInitialValues() {
+        // anonymous class extends ArrayList
+        List<String> strings = new ArrayList<>() {{ add("1st"); add("2nd"); add("3rd"); }};
+        List<String> anotherStrings = Arrays.asList("1st", "2nd", "3rd");
+    }
+
+    enum Status {
+        TIK,
+        TAK
+    }
+
     // Java Concurrency API
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        MyClass myClass = new MyClass();
+//        ExecutorService executor = Executors.newFixedThreadPool(2);
+//        ReentrantLock lock = new ReentrantLock();
+//        Callable<Integer> tik = () -> {
+//            lock.lock();
+//            try {
+//                System.out.print("TIK ");
+//            } finally {
+//                lock.unlock();
+//            }
+//            return 0;
+//        };
+//        Callable<Integer> tak = () -> {
+//            lock.lock();
+//            try {
+//                System.out.println("TAK");
+//            } finally {
+//                lock.unlock();
+//            }
+//            return 0;
+//        };
+//
+//        for (int i = 0; i < 5; i++) {
+//            executor.invokeAll(Arrays.asList(tik, tak));
+//        }
+//
+//        executor.shutdown();
+
+
+        ExecutorService simpleExec = Executors.newFixedThreadPool(2);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+        Runnable repeatTask = () -> {
+            System.out.println("Hello world");
+        };
+
+        executor.scheduleAtFixedRate(repeatTask, 1, 2, TimeUnit.SECONDS);
+        //executor.scheduleWithFixedDelay(repeatTask, 1, 2, TimeUnit.SECONDS);
+
+
+
     }
 
 }
