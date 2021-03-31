@@ -3,7 +3,9 @@ package com.company.examples.module2.ex022_concurr_api;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Main {
 
@@ -155,52 +157,68 @@ public class Main {
         List<String> anotherStrings = Arrays.asList("1st", "2nd", "3rd");
     }
 
-    enum Status {
-        TIK,
-        TAK
+    static void scheduledExecutorServiceExample() {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+
+        Runnable repeatTask = () -> {
+            sleep(1000);
+            log("Hello World");
+        };
+
+        executor.scheduleAtFixedRate(repeatTask, 0, 2000, TimeUnit.MILLISECONDS);
+        // ждём кол-во времени между вызовами
+        executor.scheduleWithFixedDelay(repeatTask, 1, 2, TimeUnit.SECONDS);
+        // ждём кол-во времени между завершением и начлом задачи
+
+
+    }
+
+    static void log(String info) {
+        System.out.printf("[%s][%s] %s%n", new Date().toString(), Thread.currentThread().getName(), info);
     }
 
     // Java Concurrency API
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-//        ExecutorService executor = Executors.newFixedThreadPool(2);
-//        ReentrantLock lock = new ReentrantLock();
-//        Callable<Integer> tik = () -> {
-//            lock.lock();
-//            try {
-//                System.out.print("TIK ");
-//            } finally {
-//                lock.unlock();
-//            }
-//            return 0;
-//        };
-//        Callable<Integer> tak = () -> {
-//            lock.lock();
-//            try {
-//                System.out.println("TAK");
-//            } finally {
-//                lock.unlock();
-//            }
-//            return 0;
-//        };
-//
-//        for (int i = 0; i < 5; i++) {
-//            executor.invokeAll(Arrays.asList(tik, tak));
-//        }
-//
-//        executor.shutdown();
 
+        ReadWriteLock lock = new ReentrantReadWriteLock();
+        // Read Lock - может удерживать любое кол-во потоков
+        // Write Lock - может удерживать только один поток
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Map<String, String> map = new HashMap<>();
 
-        ExecutorService simpleExec = Executors.newFixedThreadPool(2);
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-
-        Runnable repeatTask = () -> {
-            System.out.println("Hello world");
+        Runnable writeTask = () -> {
+            lock.writeLock().lock();
+            log("get write lock");
+            try {
+                sleep(1000);
+                map.put("foo", "bar");
+            } finally {
+                log("release write lock");
+                lock.writeLock().unlock();
+            }
         };
 
-        executor.scheduleAtFixedRate(repeatTask, 1, 2, TimeUnit.SECONDS);
-        //executor.scheduleWithFixedDelay(repeatTask, 1, 2, TimeUnit.SECONDS);
 
+        Runnable readTask = () -> {
+            lock.readLock().lock();
+            log("get read lock");
+            try {
+                System.out.println(map.get("foo"));
+                sleep(1000);
+            } finally {
+                log("release read lock");
+                lock.readLock().unlock();
+            }
+        };
 
+        executor.submit(readTask);
+        sleep(10);
+        executor.submit(readTask);
+        sleep(10);
+        executor.submit(writeTask);
+
+        executor.shutdown();
 
     }
 
