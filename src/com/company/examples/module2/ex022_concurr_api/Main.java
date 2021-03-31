@@ -178,48 +178,50 @@ public class Main {
         System.out.printf("[%s][%s] %s%n", new Date().toString(), Thread.currentThread().getName(), info);
     }
 
-    // Java Concurrency API
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-
-        ReadWriteLock lock = new ReentrantReadWriteLock();
-        // Read Lock - может удерживать любое кол-во потоков
-        // Write Lock - может удерживать только один поток
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        Map<String, String> map = new HashMap<>();
-
-        Runnable writeTask = () -> {
-            lock.writeLock().lock();
+    static ReadWriteLock rwLock = new ReentrantReadWriteLock();
+    static Map<String, String> map = new HashMap<>();
+    static Runnable writeTaskFactory(String key, String value) {
+        return () -> {
+            rwLock.writeLock().lock();
             log("get write lock");
             try {
                 sleep(1000);
-                map.put("foo", "bar");
+                map.put(key, value);
             } finally {
                 log("release write lock");
-                lock.writeLock().unlock();
+                rwLock.writeLock().unlock();
             }
         };
-
-
-        Runnable readTask = () -> {
-            lock.readLock().lock();
+    }
+    static Runnable readTaskFactory(String key) {
+        return () -> {
+            rwLock.readLock().lock();
             log("get read lock");
             try {
-                System.out.println(map.get("foo"));
+                System.out.println(map.get(key));
                 sleep(1000);
             } finally {
                 log("release read lock");
-                lock.readLock().unlock();
+                rwLock.readLock().unlock();
             }
         };
+    }
 
-        executor.submit(readTask);
+    // Java Concurrency API
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+        //ReadWriteLock lock = new ReentrantReadWriteLock();
+        // Read Lock - может удерживать любое кол-во потоков
+        // Write Lock - может удерживать только один поток
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        executor.submit(readTaskFactory("foo"));
         sleep(10);
-        executor.submit(readTask);
+        executor.submit(readTaskFactory("foo"));
         sleep(10);
-        executor.submit(writeTask);
+        executor.submit(writeTaskFactory("foo", "bar"));
 
         executor.shutdown();
 
     }
-
 }
