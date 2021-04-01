@@ -2,10 +2,12 @@ package com.company.examples.module2.ex022_concurr_api;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -207,10 +209,7 @@ public class Main {
         };
     }
 
-    // Java Concurrency API
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-
-        //ReadWriteLock lock = new ReentrantReadWriteLock();
+    static void readWriteLockExample() {
         // Read Lock - может удерживать любое кол-во потоков
         // Write Lock - может удерживать только один поток
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -222,6 +221,24 @@ public class Main {
         executor.submit(writeTaskFactory("foo", "bar"));
 
         executor.shutdown();
+    }
 
+    // Java Concurrency API
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        AtomicInteger atomicInteger = new AtomicInteger(0); // thread-safe int
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        for (int i = 0; i < 10; i++) {
+            final int finalI = i;
+            executor.submit(() -> {
+                atomicInteger.accumulateAndGet(finalI, (prev, current) -> prev * current);
+            });
+        }
+
+        executor.submit(() -> System.out.println(atomicInteger.get()));
+
+        executor.shutdown();
+        executor.awaitTermination(2, TimeUnit.SECONDS);
     }
 }
