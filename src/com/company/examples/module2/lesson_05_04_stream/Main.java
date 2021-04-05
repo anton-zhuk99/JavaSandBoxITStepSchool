@@ -2,19 +2,14 @@ package com.company.examples.module2.lesson_05_04_stream;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Thread.sleep;
-
 public class Main {
 
-    public static void main(String[] args) {
+    static void creationExample() {
         Set<String> set = Set.of("first", "second", "third");
         Stream<String> stream1 = set.stream();
 
@@ -24,6 +19,23 @@ public class Main {
 
         String[] stringArr = {"first", "second", "third"};
         Stream<String> stream4 = Arrays.stream(stringArr);
+    }
+
+    public static void main(String[] args) {
+        List<String> list = List.of("first", "second", "third", "1234567");
+        String reduction = list.stream()                 // Stream<String>: "first", "second", "third"
+                //.map(s -> s.length()) // Stream<Integer>: 5, 6, 5
+                //.filter(i -> i > 5)
+                //.sorted((s1, s2) -> s1.length() - s2.length()) // Comparator
+                .reduce("Identity", (s1, s2) -> s1 + ", " + s2);
+        System.out.println(reduction);
+        List<String> sortedList = list.stream()
+                .sorted((s1, s2) -> s1.length() - s2.length())
+                .collect(Collectors.toList());
+
+        Optional<String> min = list.stream()
+                .min((s1, s2) -> s1.length() - s2.length());
+        String minimalString = min.get();
     }
 
 }
